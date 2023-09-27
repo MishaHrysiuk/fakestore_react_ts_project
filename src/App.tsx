@@ -18,9 +18,10 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
 import { TProduct, useGetAllProductsQuery } from "./store/fakeStoreApi";
 import useLocalStorage from "use-local-storage";
+import CardLoadingSkeleton from "./components/CardLoadingSkeleton";
 
 export default function App() {
-    const { data: products = [] } = useGetAllProductsQuery({});
+    const { data: products = [], isLoading } = useGetAllProductsQuery({});
     const [theme, setTheme] = useLocalStorage<PaletteMode>("theme", "dark");
 
     const defaultTheme = createTheme({
@@ -41,57 +42,68 @@ export default function App() {
             <main>
                 <Container sx={{ py: 8 }} maxWidth="lg">
                     <Grid container spacing={4}>
-                        {products.map((product: TProduct) => (
-                            <Grid item key={product.id} xs={12} sm={6} md={4}>
-                                <Card
-                                    sx={{
-                                        height: "100%",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                    }}
+                        {isLoading ? (
+                            <CardLoadingSkeleton />
+                        ) : (
+                            products.map((product: TProduct) => (
+                                <Grid
+                                    item
+                                    key={product.id}
+                                    xs={12}
+                                    sm={6}
+                                    md={4}
+                                    lg={3}
                                 >
-                                    <CardMedia
-                                        component="img"
+                                    <Card
                                         sx={{
-                                            height: "15rem",
-                                            objectFit: "contain",
+                                            height: "100%",
+                                            display: "flex",
+                                            flexDirection: "column",
                                         }}
-                                        image={product.image}
-                                    />
-                                    <CardContent sx={{ flexGrow: 1 }}>
-                                        <Typography
-                                            gutterBottom
-                                            variant="h5"
-                                            component="h2"
-                                        >
-                                            {product.title}
-                                        </Typography>
-                                        <Typography>
-                                            {product.category
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                                product.category.slice(1)}
-                                        </Typography>
-                                    </CardContent>
-                                    <CardActions>
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            startIcon={<SearchIcon />}
-                                        >
-                                            View
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            color="success"
-                                            startIcon={<ShoppingCartIcon />}
-                                        >
-                                            To cart
-                                        </Button>
-                                    </CardActions>
-                                </Card>
-                            </Grid>
-                        ))}
+                                    >
+                                        <CardMedia
+                                            component="img"
+                                            sx={{
+                                                height: "15rem",
+                                                objectFit: "contain",
+                                            }}
+                                            image={product.image}
+                                        />
+                                        <CardContent sx={{ flexGrow: 1 }}>
+                                            <Typography
+                                                gutterBottom
+                                                variant="h5"
+                                                component="h2"
+                                            >
+                                                {product.title}
+                                            </Typography>
+                                            <Typography>
+                                                {product.category
+                                                    .charAt(0)
+                                                    .toUpperCase() +
+                                                    product.category.slice(1)}
+                                            </Typography>
+                                        </CardContent>
+                                        <CardActions>
+                                            <Button
+                                                variant="outlined"
+                                                color="primary"
+                                                startIcon={<SearchIcon />}
+                                            >
+                                                View
+                                            </Button>
+                                            <Button
+                                                variant="outlined"
+                                                color="success"
+                                                startIcon={<ShoppingCartIcon />}
+                                            >
+                                                To cart
+                                            </Button>
+                                        </CardActions>
+                                    </Card>
+                                </Grid>
+                            ))
+                        )}
                     </Grid>
                 </Container>
             </main>

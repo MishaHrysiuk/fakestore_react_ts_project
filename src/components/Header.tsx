@@ -16,10 +16,16 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import { useGetAllCategoriesQuery } from "../store/fakeStoreApi";
 import MaterialUISwitch from "./ThemeSwitch";
+import { PaletteMode } from "@mui/material";
 
 const settings = ["Profile", "Dashboard", "Logout"];
 
-function Header(props: any) {
+interface ThemeProps {
+    switchTheme?: () => void;
+    theme?: PaletteMode;
+}
+
+function Header(props: ThemeProps) {
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
     const { data: categories = [] } = useGetAllCategoriesQuery({});
