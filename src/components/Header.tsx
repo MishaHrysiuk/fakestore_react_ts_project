@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
@@ -16,7 +15,9 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import { useGetAllCategoriesQuery } from "../store/fakeStoreApi";
 import MaterialUISwitch from "./ThemeSwitch";
-import { PaletteMode } from "@mui/material";
+import { PaletteMode, Tab, Tabs } from "@mui/material";
+
+import { useNavigate, useMatch } from "react-router-dom";
 
 const settings = ["Profile", "Dashboard", "Logout"];
 
@@ -29,6 +30,8 @@ function Header(props: ThemeProps) {
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
     const { data: categories = [] } = useGetAllCategoriesQuery({});
+    const navigate = useNavigate();
+    const match = useMatch("category/:category");
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -46,17 +49,21 @@ function Header(props: ThemeProps) {
     };
 
     return (
-        <AppBar position="sticky">
+        <AppBar position="sticky" color="default">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <ShoppingBagIcon
                         sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
                     />
+
                     <Typography
                         variant="h5"
                         noWrap
                         component="a"
-                        href="#app-bar-with-responsive-menu"
+                        onClick={() => {
+                            navigate("/");
+                            handleCloseNavMenu();
+                        }}
                         sx={{
                             mr: 2,
                             display: { xs: "none", md: "flex" },
@@ -64,6 +71,7 @@ function Header(props: ThemeProps) {
                             fontWeight: 700,
                             color: "inherit",
                             textDecoration: "none",
+                            cursor: "pointer",
                         }}
                     >
                         FakeStore
@@ -103,27 +111,44 @@ function Header(props: ThemeProps) {
                                 display: { xs: "block", md: "none" },
                             }}
                         >
-                            {categories.map((category: string) => (
-                                <MenuItem
-                                    key={category}
-                                    onClick={handleCloseNavMenu}
-                                >
-                                    <Typography textAlign="center">
-                                        {category.charAt(0).toUpperCase() +
-                                            category.slice(1)}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
+                            {categories.map((category: string) => {
+                                return (
+                                    <MenuItem
+                                        key={category}
+                                        onClick={() => {
+                                            navigate(`category/${category}`);
+                                            handleCloseNavMenu();
+                                        }}
+                                        sx={{
+                                            color: "inherit",
+                                        }}
+                                        selected={
+                                            match?.params.category === category
+                                                ? true
+                                                : false
+                                        }
+                                    >
+                                        <Typography textAlign="center">
+                                            {category.charAt(0).toUpperCase() +
+                                                category.slice(1)}
+                                        </Typography>
+                                    </MenuItem>
+                                );
+                            })}
                         </Menu>
                     </Box>
                     <ShoppingBagIcon
                         sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
                     />
+
                     <Typography
                         variant="h5"
                         noWrap
                         component="a"
-                        href="#app-bar-with-responsive-menu"
+                        onClick={() => {
+                            navigate("/");
+                            handleCloseNavMenu();
+                        }}
                         sx={{
                             mr: 2,
                             display: { xs: "flex", md: "none" },
@@ -132,25 +157,41 @@ function Header(props: ThemeProps) {
                             fontWeight: 700,
                             color: "inherit",
                             textDecoration: "none",
+                            cursor: "pointer",
                         }}
                     >
                         FakeStore
                     </Typography>
+
                     <Box
                         sx={{
                             flexGrow: 1,
                             display: { xs: "none", md: "flex" },
                         }}
                     >
-                        {categories.map((category: string) => (
-                            <Button
-                                key={category}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: "white", display: "block" }}
-                            >
-                                {category}
-                            </Button>
-                        ))}
+                        <Tabs
+                            textColor="secondary"
+                            indicatorColor="secondary"
+                            value={match?.params.category}
+                        >
+                            {categories.map((category: string) => (
+                                <Tab
+                                    onClick={() => {
+                                        navigate(`category/${category}`);
+                                        handleCloseNavMenu();
+                                    }}
+                                    value={category}
+                                    label={
+                                        category.charAt(0).toUpperCase() +
+                                        category.slice(1)
+                                    }
+                                    key={category}
+                                    sx={{
+                                        color: "inherit",
+                                    }}
+                                />
+                            ))}
+                        </Tabs>
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>

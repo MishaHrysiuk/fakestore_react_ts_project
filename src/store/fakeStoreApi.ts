@@ -15,8 +15,8 @@ export const fakeStoreApi = createApi({
         getAllCategories: builder.query({
             query: () => "/products/categories",
         }),
-        getCategoryByName: builder.query({
-            query: (name: string) => `/products/category/${name}`,
+        getProductsByCategory: builder.query({
+            query: (category: string) => `/products/category/${category}`,
         }),
         addNewProduct: builder.mutation({
             query: (product: TProduct) => ({
@@ -183,7 +183,7 @@ export const {
     useGetAllUsersQuery,
     useGetCartByIdQuery,
     useGetCartsInDateRangeQuery,
-    useGetCategoryByNameQuery,
+    useGetProductsByCategoryQuery,
     useGetProductByIdQuery,
     useGetUserByIdQuery,
     useGetUserCartsQuery,
