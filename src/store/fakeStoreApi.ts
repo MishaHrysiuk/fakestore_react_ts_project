@@ -10,7 +10,7 @@ export const fakeStoreApi = createApi({
             query: () => "/products",
         }),
         getProductById: builder.query({
-            query: (id: number) => `/product/${id}`,
+            query: (id: number) => `/products/${id}`,
         }),
         getAllCategories: builder.query({
             query: () => "/products/categories",

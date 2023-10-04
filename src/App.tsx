@@ -25,7 +25,7 @@ export default function App() {
                                 element={<ChoosenCategoryPage />}
                             />
                             <Route
-                                path="products/:product"
+                                path="products/:productId"
                                 element={<SingleProductPage />}
                             />
                             <Route path="*" element={<ErrorPage />} />
