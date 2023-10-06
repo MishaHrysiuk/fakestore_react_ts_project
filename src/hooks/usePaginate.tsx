@@ -10,6 +10,10 @@ export default function usePagging<T>(startPage = 1, elemOnPage = 4) {
         }
     };
 
+    const getAllPages = (list: Array<T>) => {
+        return Math.ceil(list.length / countElemOnPage);
+    };
+
     const prevPage = () => {
         if (currentPage - 1 > 0) {
             setCurrentPage((currentPage) => currentPage - 1);
@@ -35,5 +39,6 @@ export default function usePagging<T>(startPage = 1, elemOnPage = 4) {
         prevPage,
         firstPage,
         lastPage,
+        getAllPages,
     };
 }
