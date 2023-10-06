@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useGetProductsByCategoryQuery } from "../store/fakeStoreApi";
+import { useGetProductsByCategoryQuery } from "../api/fakeStoreApi";
 import ProductsList from "../components/ProductsList";
 
 export default function ChoosenCategoryPage() {

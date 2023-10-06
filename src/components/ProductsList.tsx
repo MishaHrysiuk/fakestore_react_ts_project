@@ -1,19 +1,30 @@
 import {
+    Box,
     Button,
     Card,
     CardActions,
     CardContent,
     CardMedia,
     Container,
+    FormControl,
     Grid,
+    InputLabel,
+    MenuItem,
+    Select,
     Typography,
 } from "@mui/material";
 import CardLoadingSkeleton from "../components/CardLoadingSkeleton";
-import { TProduct } from "../store/fakeStoreApi";
+import { TProduct } from "../api/fakeStoreApi";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
+import useFiltering from "../hooks/useFiltering";
+import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { TSort, changeSortType } from "../store/searchSlice";
 
 export default function ProductsList(props: {
     isLoading: boolean;
@@ -22,13 +33,54 @@ export default function ProductsList(props: {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
 
+    const search = useSelector((state: RootState) => state.search.search);
+    const sortType = useSelector((state: RootState) => state.search.sortType);
+    const dispatch = useDispatch();
+
+    const { searchProduct, sortingProducts } = useFiltering();
+
+    const filteredData = useMemo(() => {
+        return sortingProducts(searchProduct(props.products, search), sortType);
+        // eslint-disable-next-line
+    }, [props.products, search, sortType]);
+
     return (
-        <Container sx={{ py: 8 }} maxWidth="lg">
+        <Container sx={{ py: 5 }} maxWidth="lg">
+            <Box
+                sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
+            >
+                <Button
+                    color="inherit"
+                    onClick={() => navigate(-1)}
+                    startIcon={<ArrowBackIosNewIcon />}
+                >
+                    Back
+                </Button>
+                <FormControl size="small" sx={{ minWidth: 200 }}>
+                    <InputLabel id="demo-simple-select-label">
+                        Sorting
+                    </InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={sortType}
+                        label="Sorting"
+                        onChange={(e) =>
+                            dispatch(changeSortType(e.target.value as TSort))
+                        }
+                    >
+                        <MenuItem value="norm">Normal</MenuItem>
+                        <MenuItem value="chp">First cheap</MenuItem>
+                        <MenuItem value="exp">First expensive</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+
             <Grid container spacing={4}>
                 {props.isLoading ? (
                     <CardLoadingSkeleton />
                 ) : (
-                    props.products.map((product: TProduct) => (
+                    filteredData.map((product: TProduct) => (
                         <Grid
                             item
                             key={product.id}
@@ -60,12 +112,7 @@ export default function ProductsList(props: {
                                     >
                                         {product.title}
                                     </Typography>
-                                    <Typography>
-                                        {product.category
-                                            .charAt(0)
-                                            .toUpperCase() +
-                                            product.category.slice(1)}
-                                    </Typography>
+                                    <Typography>{product.price} $</Typography>
                                 </CardContent>
                                 <CardActions
                                     sx={{

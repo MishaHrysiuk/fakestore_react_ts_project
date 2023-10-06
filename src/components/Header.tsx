@@ -10,14 +10,21 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import SearchIcon from "@mui/icons-material/Search";
+
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-import { useGetAllCategoriesQuery } from "../store/fakeStoreApi";
+import { useGetAllCategoriesQuery } from "../api/fakeStoreApi";
 import MaterialUISwitch from "./ThemeSwitch";
 import { PaletteMode, Tab, Tabs } from "@mui/material";
 
 import { useNavigate, useMatch } from "react-router-dom";
+
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store";
+import { changeSearch, clearSearch } from "../store/searchSlice";
+import { Search, SearchIconWrapper, StyledInputBase } from "./SearchInput";
 
 const settings = ["Profile", "Dashboard", "Logout"];
 
@@ -33,11 +40,15 @@ function Header(props: ThemeProps) {
     const navigate = useNavigate();
     const match = useMatch("category/:category");
 
+    const count = useSelector((state: RootState) => state.search.search);
+    const dispatch = useDispatch();
+
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
     };
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
+        dispatch(clearSearch());
     };
 
     const handleCloseNavMenu = () => {
@@ -49,13 +60,12 @@ function Header(props: ThemeProps) {
     };
 
     return (
-        <AppBar position="sticky" color="default">
+        <AppBar position="sticky">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <ShoppingBagIcon
-                        sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+                        sx={{ display: { xs: "none", lg: "flex" }, mr: 1 }}
                     />
-
                     <Typography
                         variant="h5"
                         noWrap
@@ -66,7 +76,7 @@ function Header(props: ThemeProps) {
                         }}
                         sx={{
                             mr: 2,
-                            display: { xs: "none", md: "flex" },
+                            display: { xs: "none", lg: "flex" },
                             fontFamily: "monospace",
                             fontWeight: 700,
                             color: "inherit",
@@ -79,8 +89,8 @@ function Header(props: ThemeProps) {
 
                     <Box
                         sx={{
-                            flexGrow: 1,
-                            display: { xs: "flex", md: "none" },
+                            flexGrow: 0,
+                            display: { xs: "flex", lg: "none" },
                         }}
                     >
                         <IconButton
@@ -108,7 +118,7 @@ function Header(props: ThemeProps) {
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
                             sx={{
-                                display: { xs: "block", md: "none" },
+                                display: { xs: "block", lg: "none" },
                             }}
                         >
                             {categories.map((category: string) => {
@@ -138,7 +148,7 @@ function Header(props: ThemeProps) {
                         </Menu>
                     </Box>
                     <ShoppingBagIcon
-                        sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+                        sx={{ display: { xs: "flex", lg: "none" }, mr: 1 }}
                     />
 
                     <Typography
@@ -151,9 +161,10 @@ function Header(props: ThemeProps) {
                         }}
                         sx={{
                             mr: 2,
-                            display: { xs: "flex", md: "none" },
                             flexGrow: 1,
+                            display: { xs: "flex", lg: "none" },
                             fontFamily: "monospace",
+                            justifySelf: "flex-start",
                             fontWeight: 700,
                             color: "inherit",
                             textDecoration: "none",
@@ -166,7 +177,7 @@ function Header(props: ThemeProps) {
                     <Box
                         sx={{
                             flexGrow: 1,
-                            display: { xs: "none", md: "flex" },
+                            display: { xs: "none", lg: "flex" },
                         }}
                     >
                         <Tabs
@@ -193,6 +204,32 @@ function Header(props: ThemeProps) {
                             ))}
                         </Tabs>
                     </Box>
+
+                    <Search
+                        sx={{
+                            display: { xs: "none", sm: "block" },
+                        }}
+                    >
+                        <SearchIconWrapper>
+                            <SearchIcon />
+                        </SearchIconWrapper>
+                        <StyledInputBase
+                            placeholder="Search…"
+                            inputProps={{ "aria-label": "search" }}
+                            value={count}
+                            onChange={(e) =>
+                                dispatch(changeSearch(e.target.value))
+                            }
+                        />
+                    </Search>
+
+                    <MaterialUISwitch
+                        onChange={props.switchTheme}
+                        checked={props.theme === "dark"}
+                        sx={{
+                            display: { xs: "none", sm: "flex" },
+                        }}
+                    />
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
@@ -231,9 +268,30 @@ function Header(props: ThemeProps) {
                                     </Typography>
                                 </MenuItem>
                             ))}
+                            <Search
+                                sx={{
+                                    display: { xs: "block", sm: "none" },
+                                }}
+                            >
+                                <SearchIconWrapper>
+                                    <SearchIcon />
+                                </SearchIconWrapper>
+                                <StyledInputBase
+                                    placeholder="Search…"
+                                    inputProps={{ "aria-label": "search" }}
+                                    value={count}
+                                    onChange={(e) =>
+                                        dispatch(changeSearch(e.target.value))
+                                    }
+                                />
+                            </Search>
+
                             <MaterialUISwitch
                                 onChange={props.switchTheme}
                                 checked={props.theme === "dark"}
+                                sx={{
+                                    display: { xs: "flex", sm: "none" },
+                                }}
                             />
                         </Menu>
                     </Box>

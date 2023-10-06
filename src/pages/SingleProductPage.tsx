@@ -7,7 +7,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetProductByIdQuery } from "../store/fakeStoreApi";
+import { useGetProductByIdQuery } from "../api/fakeStoreApi";
 import { enqueueSnackbar } from "notistack";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
