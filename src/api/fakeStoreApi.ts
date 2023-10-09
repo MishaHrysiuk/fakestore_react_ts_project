@@ -9,8 +9,8 @@ export const fakeStoreApi = createApi({
         getAllProducts: builder.query({
             query: () => "/products",
         }),
-        getProductById: builder.query({
-            query: (id: number) => `/products/${id}`,
+        getProductById: builder.query<TProduct, number>({
+            query: (id) => `/products/${id}`,
         }),
         getAllCategories: builder.query({
             query: () => "/products/categories",
@@ -133,6 +133,7 @@ export type TProductCart = {
 };
 
 export type TCart = {
+    id?: number;
     userId: number;
     date: string;
     products: Array<TProductCart>;

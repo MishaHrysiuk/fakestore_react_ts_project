@@ -106,7 +106,7 @@ export default function ProductsList(props: {
                         >
                             <Card
                                 sx={{
-                                    height: "100%",
+                                    height: "30rem",
                                     display: "flex",
                                     flexDirection: "column",
                                 }}
@@ -124,6 +124,13 @@ export default function ProductsList(props: {
                                         gutterBottom
                                         variant="h5"
                                         component="h2"
+                                        sx={{
+                                            textOverflow: "ellipsis",
+                                            overflow: "hidden",
+                                            WebkitLineClamp: "3",
+                                            WebkitBoxOrient: "vertical",
+                                            display: "-webkit-box",
+                                        }}
                                     >
                                         {product.title}
                                     </Typography>

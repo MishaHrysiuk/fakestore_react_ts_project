@@ -26,11 +26,11 @@ import { RootState } from "../store";
 import { changeSearch, clearSearch } from "../store/searchSlice";
 import { Search, SearchIconWrapper, StyledInputBase } from "./SearchInput";
 
-const settings = ["Profile", "Dashboard", "Logout"];
+const settings = [{ label: "Cart", link: "/cart" }];
 
 interface ThemeProps {
-    switchTheme?: () => void;
-    theme?: PaletteMode;
+    switchTheme: () => void;
+    theme: PaletteMode;
 }
 
 function Header(props: ThemeProps) {
@@ -183,7 +183,7 @@ function Header(props: ThemeProps) {
                         <Tabs
                             textColor="secondary"
                             indicatorColor="secondary"
-                            value={match?.params.category}
+                            value={match ? match.params.category : false}
                         >
                             {categories.map((category: string) => (
                                 <Tab
@@ -260,11 +260,14 @@ function Header(props: ThemeProps) {
                         >
                             {settings.map((setting) => (
                                 <MenuItem
-                                    key={setting}
-                                    onClick={handleCloseUserMenu}
+                                    key={setting.label}
+                                    onClick={() => {
+                                        navigate(setting.link);
+                                        handleCloseUserMenu();
+                                    }}
                                 >
                                     <Typography textAlign="center">
-                                        {setting}
+                                        {setting.label}
                                     </Typography>
                                 </MenuItem>
                             ))}
