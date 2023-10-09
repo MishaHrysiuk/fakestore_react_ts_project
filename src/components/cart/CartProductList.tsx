@@ -15,7 +15,7 @@ export default function CartProductList({ cart }: { cart: TCart }) {
                 Cart id: {cart.id}
             </Typography>
             <Typography variant="h6" align="center">
-                Created: {new Date(cart.date).toJSON().slice(0, 10)}
+                Creation date: {new Date(cart.date).toJSON().slice(0, 10)}
             </Typography>
             <TableContainer component={Paper} sx={{ mb: 3 }}>
                 <Table aria-label="simple table">

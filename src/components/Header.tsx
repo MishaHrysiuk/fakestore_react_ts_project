@@ -36,7 +36,7 @@ interface ThemeProps {
 function Header(props: ThemeProps) {
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-    const { data: categories = [] } = useGetAllCategoriesQuery({});
+    const { data: categories = [] } = useGetAllCategoriesQuery();
     const navigate = useNavigate();
     const match = useMatch("category/:category");
 
