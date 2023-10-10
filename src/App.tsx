@@ -12,6 +12,8 @@ import ChoosenCategoryPage from "./pages/ChoosenCategoryPage";
 import { SnackbarProvider } from "notistack";
 import SingleProductPage from "./pages/SingleProductPage";
 import CartPage from "./pages/CartPage";
+import SignUpPage from "./pages/SignUpPage";
+import SignInPage from "./pages/SignInPage";
 
 export default function App() {
     const { theme, switchTheme, defaultTheme } = useThemeStyle();
@@ -33,6 +35,8 @@ export default function App() {
                                 path="products/:productId"
                                 element={<SingleProductPage />}
                             />
+                            <Route path="signup" element={<SignUpPage />} />
+                            <Route path="signin" element={<SignInPage />} />
                             <Route
                                 path="*"
                                 element={<Navigate to="/" replace={true} />}
