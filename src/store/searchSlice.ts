@@ -1,14 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from ".";
 
 export type TSort = "norm" | "exp" | "chp";
 
-export interface SearchState {
+export interface ISearchState {
     search: string;
     sortType: TSort;
 }
 
-const initialState: SearchState = {
+const initialState: ISearchState = {
     search: "",
     sortType: "norm",
 };
@@ -32,7 +33,8 @@ export const searchSlice = createSlice({
     },
 });
 
-// Action creators are generated for each case reducer function
+export const selectSearch = (state: RootState) => state.search;
+
 export const { changeSearch, clearSearch, changeSortType, clearSortType } =
     searchSlice.actions;
 

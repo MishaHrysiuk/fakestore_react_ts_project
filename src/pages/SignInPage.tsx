@@ -1,4 +1,3 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,17 +11,83 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useNavigate } from "react-router-dom";
+import { useLoginUserMutation } from "../api/fakeStoreApi";
+import { useEffect, useState } from "react";
+import { useAppDispatch } from "../store/hooks";
+import { setUser } from "../store/authSlice";
+import jwtDecode from "jwt-decode";
+import { enqueueSnackbar } from "notistack";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 export default function SignIn() {
-    const navigate = useNavigate();
+    const [formValue, setFormValue] = useState<{
+        username: string;
+        password: string;
+    }>({ username: "", password: "" });
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const { username, password } = formValue;
+
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
+    const [
+        loginUser,
+        {
+            data: loginData,
+            isSuccess: isLoginSuccess,
+            isError: isLoginError,
+            isLoading: isLoginLoading,
+        },
+    ] = useLoginUserMutation();
+
+    useEffect(() => {
+        if (isLoginSuccess) {
+            dispatch(
+                setUser({
+                    id: (jwtDecode(loginData?.token as string) as any).sub,
+                    token: loginData?.token as string,
+                })
+            );
+            enqueueSnackbar("User Login Succesfully", {
+                variant: "success",
+                autoHideDuration: 3000,
+                anchorOrigin: {
+                    horizontal: "right",
+                    vertical: "bottom",
+                },
+            });
+            navigate("/");
+        }
+        if (isLoginError) {
+            enqueueSnackbar("Username or password is incorrect", {
+                variant: "error",
+                autoHideDuration: 3000,
+                anchorOrigin: {
+                    horizontal: "right",
+                    vertical: "bottom",
+                },
+            });
+        }
+    }, [isLoginSuccess, isLoginError]);
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFormValue({ ...formValue, [event.target.name]: event.target.value });
+    };
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get("email"),
-            password: data.get("password"),
-        });
+        if (username && password) {
+            await loginUser({ username, password });
+        } else {
+            enqueueSnackbar("Dont fill inputs", {
+                variant: "error",
+                autoHideDuration: 3000,
+                anchorOrigin: {
+                    horizontal: "right",
+                    vertical: "bottom",
+                },
+            });
+        }
     };
 
     return (
@@ -52,10 +117,11 @@ export default function SignIn() {
                         margin="normal"
                         required
                         fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
+                        id="username"
+                        label="Username"
+                        name="username"
+                        autoComplete="username"
+                        onChange={handleChange}
                         autoFocus
                     />
                     <TextField
@@ -66,20 +132,22 @@ export default function SignIn() {
                         label="Password"
                         type="password"
                         id="password"
+                        onChange={handleChange}
                         autoComplete="current-password"
                     />
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />}
                         label="Remember me"
                     />
-                    <Button
+                    <LoadingButton
                         type="submit"
                         fullWidth
+                        loading={isLoginLoading}
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
                         Sign In
-                    </Button>
+                    </LoadingButton>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
                             <Link

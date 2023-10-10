@@ -14,9 +14,20 @@ import SingleProductPage from "./pages/SingleProductPage";
 import CartPage from "./pages/CartPage";
 import SignUpPage from "./pages/SignUpPage";
 import SignInPage from "./pages/SignInPage";
+import { useAppDispatch } from "./store/hooks";
+import { selectAuth, setUser } from "./store/authSlice";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 export default function App() {
     const { theme, switchTheme, defaultTheme } = useThemeStyle();
+    const dispatch = useAppDispatch();
+    const { token } = useSelector(selectAuth);
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+    useEffect(() => {
+        dispatch(setUser(user));
+    });
 
     return (
         <Router>
@@ -36,7 +47,16 @@ export default function App() {
                                 element={<SingleProductPage />}
                             />
                             <Route path="signup" element={<SignUpPage />} />
-                            <Route path="signin" element={<SignInPage />} />
+                            <Route
+                                path="signin"
+                                element={
+                                    token ? (
+                                        <Navigate to="/" replace={true} />
+                                    ) : (
+                                        <SignInPage />
+                                    )
+                                }
+                            />
                             <Route
                                 path="*"
                                 element={<Navigate to="/" replace={true} />}

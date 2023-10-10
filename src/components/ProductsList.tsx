@@ -23,11 +23,10 @@ import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import useFiltering from "../hooks/useFiltering";
 import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { TSort, changeSortType } from "../store/searchSlice";
+import { TSort, changeSortType, selectSearch } from "../store/searchSlice";
 import usePagging from "../hooks/usePaginate";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 export default function ProductsList(props: {
     isLoading: boolean;
@@ -36,9 +35,9 @@ export default function ProductsList(props: {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
 
-    const search = useSelector((state: RootState) => state.search.search);
-    const sortType = useSelector((state: RootState) => state.search.sortType);
-    const dispatch = useDispatch();
+    const search = useAppSelector(selectSearch).search;
+    const sortType = useAppSelector(selectSearch).sortType;
+    const dispatch = useAppDispatch();
 
     const { searchProduct, sortingProducts } = useFiltering();
     const { currentPage, countElemOnPage, setCurrentPage, getAllPages } =
@@ -185,7 +184,7 @@ export default function ProductsList(props: {
                     mt: 3,
                 }}
             >
-                {paginatedData.length === 0 ? (
+                {paginatedData.length === 0 && !props.isLoading ? (
                     <Typography variant="h4">Not Found :(</Typography>
                 ) : (
                     <Stack spacing={2}>

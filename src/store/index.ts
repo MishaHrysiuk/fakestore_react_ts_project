@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { fakeStoreApi } from "../api/fakeStoreApi";
 import searchReducer from "./searchSlice";
+import authReducer from "./authSlice";
 
 export const store = configureStore({
     reducer: {
         [fakeStoreApi.reducerPath]: fakeStoreApi.reducer,
         search: searchReducer,
+        auth: authReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(fakeStoreApi.middleware),

@@ -21,10 +21,11 @@ import { PaletteMode, Tab, Tabs } from "@mui/material";
 
 import { useNavigate, useMatch } from "react-router-dom";
 
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../store";
-import { changeSearch, clearSearch } from "../store/searchSlice";
+import { changeSearch, clearSearch, selectSearch } from "../store/searchSlice";
 import { Search, SearchIconWrapper, StyledInputBase } from "./SearchInput";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { logout } from "../store/authSlice";
+import { enqueueSnackbar } from "notistack";
 
 const settings = [{ label: "Cart", link: "/cart" }];
 
@@ -36,12 +37,14 @@ interface ThemeProps {
 function Header(props: ThemeProps) {
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
     const { data: categories = [] } = useGetAllCategoriesQuery();
+
     const navigate = useNavigate();
     const match = useMatch("category/:category");
 
-    const count = useSelector((state: RootState) => state.search.search);
-    const dispatch = useDispatch();
+    const search = useAppSelector(selectSearch).search;
+    const dispatch = useAppDispatch();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -216,7 +219,7 @@ function Header(props: ThemeProps) {
                         <StyledInputBase
                             placeholder="Search…"
                             inputProps={{ "aria-label": "search" }}
-                            value={count}
+                            value={search}
                             onChange={(e) =>
                                 dispatch(changeSearch(e.target.value))
                             }
@@ -271,6 +274,25 @@ function Header(props: ThemeProps) {
                                     </Typography>
                                 </MenuItem>
                             ))}
+                            <MenuItem
+                                onClick={() => {
+                                    navigate("/signin");
+                                    handleCloseUserMenu();
+                                    dispatch(logout());
+                                    enqueueSnackbar("User Logout Succesfully", {
+                                        variant: "info",
+                                        autoHideDuration: 3000,
+                                        anchorOrigin: {
+                                            horizontal: "right",
+                                            vertical: "bottom",
+                                        },
+                                    });
+                                }}
+                            >
+                                <Typography textAlign="center">
+                                    Logout
+                                </Typography>
+                            </MenuItem>
                             <Search
                                 sx={{
                                     display: { xs: "block", sm: "none" },
@@ -282,7 +304,7 @@ function Header(props: ThemeProps) {
                                 <StyledInputBase
                                     placeholder="Search…"
                                     inputProps={{ "aria-label": "search" }}
-                                    value={count}
+                                    value={search}
                                     onChange={(e) =>
                                         dispatch(changeSearch(e.target.value))
                                     }

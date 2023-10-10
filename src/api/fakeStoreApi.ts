@@ -135,10 +135,10 @@ export const fakeStoreApi = createApi({
             }),
             invalidatesTags: ["Users"],
         }),
-        loginUser: builder.mutation<string, TUserLogin>({
+        loginUser: builder.mutation<{ token: string }, TUserLogin>({
             query: ({ username, password }) => ({
                 url: `/auth/login`,
-                method: "DELETE",
+                method: "POST",
                 body: { username, password },
             }),
         }),
