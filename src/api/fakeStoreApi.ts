@@ -71,7 +71,7 @@ export const fakeStoreApi = createApi({
                 `/carts?startdate=${startDate}&enddate=${endDate}`,
             providesTags: ["Carts"],
         }),
-        getUserCarts: builder.query<TCart[], number>({
+        getUserCarts: builder.query<TCart[], number | null>({
             query: (id) => `/carts/user/${id}`,
             providesTags: ["Carts"],
         }),
@@ -177,8 +177,8 @@ export type TUserName = {
 };
 
 export type TGeoLocation = {
-    lat: string;
-    long: string;
+    lat: number;
+    long: number;
 };
 
 export type TAddress = {

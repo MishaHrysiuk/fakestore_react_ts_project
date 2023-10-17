@@ -46,7 +46,16 @@ export default function App() {
                                 path="products/:productId"
                                 element={<SingleProductPage />}
                             />
-                            <Route path="signup" element={<SignUpPage />} />
+                            <Route
+                                path="signup"
+                                element={
+                                    token ? (
+                                        <Navigate to="/" replace={true} />
+                                    ) : (
+                                        <SignUpPage />
+                                    )
+                                }
+                            />
                             <Route
                                 path="signin"
                                 element={
@@ -61,7 +70,16 @@ export default function App() {
                                 path="*"
                                 element={<Navigate to="/" replace={true} />}
                             />
-                            <Route path="cart" element={<CartPage />} />
+                            <Route
+                                path="cart"
+                                element={
+                                    token ? (
+                                        <CartPage />
+                                    ) : (
+                                        <Navigate to="/signin" replace={true} />
+                                    )
+                                }
+                            />
                         </Routes>
                     </main>
                 </SnackbarProvider>

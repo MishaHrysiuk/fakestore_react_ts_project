@@ -30,13 +30,13 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 export default function ProductsList(props: {
     isLoading: boolean;
+    isSuccess: boolean;
     products: TProduct[];
 }) {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
 
-    const search = useAppSelector(selectSearch).search;
-    const sortType = useAppSelector(selectSearch).sortType;
+    const { search, sortType } = useAppSelector(selectSearch);
     const dispatch = useAppDispatch();
 
     const { searchProduct, sortingProducts } = useFiltering();
@@ -184,9 +184,11 @@ export default function ProductsList(props: {
                     mt: 3,
                 }}
             >
-                {paginatedData.length === 0 && !props.isLoading ? (
+                {paginatedData.length === 0 &&
+                !props.isLoading &&
+                props.isSuccess ? (
                     <Typography variant="h4">Not Found :(</Typography>
-                ) : (
+                ) : paginatedData.length !== 0 && props.isSuccess ? (
                     <Stack spacing={2}>
                         <Pagination
                             count={getAllPages(filteredData)}
@@ -197,6 +199,8 @@ export default function ProductsList(props: {
                             color="primary"
                         />
                     </Stack>
+                ) : (
+                    <Typography variant="h4">Error during loading(</Typography>
                 )}
             </Box>
         </Container>

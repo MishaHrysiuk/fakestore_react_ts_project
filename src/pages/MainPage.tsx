@@ -2,11 +2,19 @@ import { useGetAllProductsQuery } from "../api/fakeStoreApi";
 import ProductsList from "../components/ProductsList";
 
 export default function MainPage() {
-    const { data: products = [], isLoading } = useGetAllProductsQuery();
+    const {
+        data: products = [],
+        isLoading,
+        isSuccess,
+    } = useGetAllProductsQuery();
 
     return (
         <>
-            <ProductsList isLoading={isLoading} products={products} />
+            <ProductsList
+                isLoading={isLoading}
+                isSuccess={isSuccess}
+                products={products}
+            />
         </>
     );
 }

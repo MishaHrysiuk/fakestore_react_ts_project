@@ -17,14 +17,14 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import { useGetAllCategoriesQuery } from "../api/fakeStoreApi";
 import MaterialUISwitch from "./ThemeSwitch";
-import { PaletteMode, Tab, Tabs } from "@mui/material";
+import { Link, PaletteMode, Tab, Tabs } from "@mui/material";
 
 import { useNavigate, useMatch } from "react-router-dom";
 
 import { changeSearch, clearSearch, selectSearch } from "../store/searchSlice";
 import { Search, SearchIconWrapper, StyledInputBase } from "./SearchInput";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { logout } from "../store/authSlice";
+import { logout, selectAuth } from "../store/authSlice";
 import { enqueueSnackbar } from "notistack";
 
 const settings = [{ label: "Cart", link: "/cart" }];
@@ -43,7 +43,8 @@ function Header(props: ThemeProps) {
     const navigate = useNavigate();
     const match = useMatch("category/:category");
 
-    const search = useAppSelector(selectSearch).search;
+    const { search } = useAppSelector(selectSearch);
+    const { token } = useAppSelector(selectAuth);
     const dispatch = useAppDispatch();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -234,92 +235,110 @@ function Header(props: ThemeProps) {
                         }}
                     />
 
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
-                            <IconButton
-                                onClick={handleOpenUserMenu}
-                                color="inherit"
-                            >
-                                <AccountCircleIcon
-                                    sx={{ fontSize: "2.5rem" }}
-                                />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: "45px" }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
+                    {!token ? (
+                        <Link
+                            underline="none"
+                            color="inherit"
+                            onClick={() => navigate("/signin")}
+                            sx={{ cursor: "pointer", mx: 2 }}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem
-                                    key={setting.label}
-                                    onClick={() => {
-                                        navigate(setting.link);
-                                        handleCloseUserMenu();
+                            Login
+                        </Link>
+                    ) : (
+                        <Box sx={{ flexGrow: 0 }}>
+                            <Tooltip title="Open settings">
+                                <IconButton
+                                    onClick={handleOpenUserMenu}
+                                    color="inherit"
+                                >
+                                    <AccountCircleIcon
+                                        sx={{ fontSize: "2.5rem" }}
+                                    />
+                                </IconButton>
+                            </Tooltip>
+                            <Menu
+                                sx={{ mt: "45px" }}
+                                id="menu-appbar"
+                                anchorEl={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                                open={Boolean(anchorElUser)}
+                                onClose={handleCloseUserMenu}
+                            >
+                                {settings.map((setting) => (
+                                    <MenuItem
+                                        key={setting.label}
+                                        onClick={() => {
+                                            navigate(setting.link);
+                                            handleCloseUserMenu();
+                                        }}
+                                    >
+                                        <Typography textAlign="center">
+                                            {setting.label}
+                                        </Typography>
+                                    </MenuItem>
+                                ))}
+                                {!token ? null : (
+                                    <MenuItem
+                                        onClick={() => {
+                                            navigate("/signin");
+                                            handleCloseUserMenu();
+                                            dispatch(logout());
+                                            enqueueSnackbar(
+                                                "User Logout Succesfully",
+                                                {
+                                                    variant: "info",
+                                                    autoHideDuration: 3000,
+                                                    anchorOrigin: {
+                                                        horizontal: "right",
+                                                        vertical: "bottom",
+                                                    },
+                                                }
+                                            );
+                                        }}
+                                    >
+                                        <Typography textAlign="center">
+                                            Logout
+                                        </Typography>
+                                    </MenuItem>
+                                )}
+                                <Search
+                                    sx={{
+                                        display: { xs: "block", sm: "none" },
                                     }}
                                 >
-                                    <Typography textAlign="center">
-                                        {setting.label}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
-                            <MenuItem
-                                onClick={() => {
-                                    navigate("/signin");
-                                    handleCloseUserMenu();
-                                    dispatch(logout());
-                                    enqueueSnackbar("User Logout Succesfully", {
-                                        variant: "info",
-                                        autoHideDuration: 3000,
-                                        anchorOrigin: {
-                                            horizontal: "right",
-                                            vertical: "bottom",
-                                        },
-                                    });
-                                }}
-                            >
-                                <Typography textAlign="center">
-                                    Logout
-                                </Typography>
-                            </MenuItem>
-                            <Search
-                                sx={{
-                                    display: { xs: "block", sm: "none" },
-                                }}
-                            >
-                                <SearchIconWrapper>
-                                    <SearchIcon />
-                                </SearchIconWrapper>
-                                <StyledInputBase
-                                    placeholder="Search…"
-                                    inputProps={{ "aria-label": "search" }}
-                                    value={search}
-                                    onChange={(e) =>
-                                        dispatch(changeSearch(e.target.value))
-                                    }
-                                />
-                            </Search>
+                                    <SearchIconWrapper>
+                                        <SearchIcon />
+                                    </SearchIconWrapper>
+                                    <StyledInputBase
+                                        placeholder="Search…"
+                                        inputProps={{ "aria-label": "search" }}
+                                        value={search}
+                                        onChange={(e) =>
+                                            dispatch(
+                                                changeSearch(e.target.value)
+                                            )
+                                        }
+                                    />
+                                </Search>
 
-                            <MaterialUISwitch
-                                onChange={props.switchTheme}
-                                checked={props.theme === "dark"}
-                                sx={{
-                                    display: { xs: "flex", sm: "none" },
-                                }}
-                            />
-                        </Menu>
-                    </Box>
+                                <MaterialUISwitch
+                                    onChange={props.switchTheme}
+                                    checked={props.theme === "dark"}
+                                    sx={{
+                                        display: { xs: "flex", sm: "none" },
+                                    }}
+                                />
+                            </Menu>
+                        </Box>
+                    )}
                 </Toolbar>
             </Container>
         </AppBar>
