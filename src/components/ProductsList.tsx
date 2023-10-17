@@ -10,7 +10,9 @@ import {
     Grid,
     InputLabel,
     MenuItem,
+    Pagination,
     Select,
+    Stack,
     Typography,
 } from "@mui/material";
 import CardLoadingSkeleton from "../components/CardLoadingSkeleton";
@@ -20,29 +22,49 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import useFiltering from "../hooks/useFiltering";
-import { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useEffect, useMemo } from "react";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { TSort, changeSortType } from "../store/searchSlice";
+import { TSort, changeSortType, selectSearch } from "../store/searchSlice";
+import usePagging from "../hooks/usePaginate";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 export default function ProductsList(props: {
     isLoading: boolean;
+    isSuccess: boolean;
     products: TProduct[];
 }) {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
 
-    const search = useSelector((state: RootState) => state.search.search);
-    const sortType = useSelector((state: RootState) => state.search.sortType);
-    const dispatch = useDispatch();
+    const { search, sortType } = useAppSelector(selectSearch);
+    const dispatch = useAppDispatch();
 
     const { searchProduct, sortingProducts } = useFiltering();
+    const { currentPage, countElemOnPage, setCurrentPage, getAllPages } =
+        usePagging<TProduct>();
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [setCurrentPage, search]);
 
     const filteredData = useMemo(() => {
         return sortingProducts(searchProduct(props.products, search), sortType);
         // eslint-disable-next-line
     }, [props.products, search, sortType]);
+
+    const paginatedData = useMemo(() => {
+        const startElem = currentPage * countElemOnPage - countElemOnPage;
+        const endElem = currentPage * countElemOnPage;
+        return filteredData.slice(startElem, endElem);
+        // eslint-disable-next-line
+    }, [
+        props.products,
+        search,
+        sortType,
+        currentPage,
+        countElemOnPage,
+        filteredData,
+    ]);
 
     return (
         <Container sx={{ py: 5 }} maxWidth="lg">
@@ -80,7 +102,7 @@ export default function ProductsList(props: {
                 {props.isLoading ? (
                     <CardLoadingSkeleton />
                 ) : (
-                    filteredData.map((product: TProduct) => (
+                    paginatedData.map((product: TProduct) => (
                         <Grid
                             item
                             key={product.id}
@@ -91,7 +113,7 @@ export default function ProductsList(props: {
                         >
                             <Card
                                 sx={{
-                                    height: "100%",
+                                    height: "30rem",
                                     display: "flex",
                                     flexDirection: "column",
                                 }}
@@ -109,6 +131,13 @@ export default function ProductsList(props: {
                                         gutterBottom
                                         variant="h5"
                                         component="h2"
+                                        sx={{
+                                            textOverflow: "ellipsis",
+                                            overflow: "hidden",
+                                            WebkitLineClamp: "3",
+                                            WebkitBoxOrient: "vertical",
+                                            display: "-webkit-box",
+                                        }}
                                     >
                                         {product.title}
                                     </Typography>
@@ -156,6 +185,32 @@ export default function ProductsList(props: {
                     ))
                 )}
             </Grid>
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    mt: 3,
+                }}
+            >
+                {paginatedData.length === 0 &&
+                !props.isLoading &&
+                props.isSuccess ? (
+                    <Typography variant="h4">Not Found :(</Typography>
+                ) : paginatedData.length !== 0 && props.isSuccess ? (
+                    <Stack spacing={2}>
+                        <Pagination
+                            count={getAllPages(filteredData)}
+                            page={currentPage}
+                            onChange={(e, value) => {
+                                setCurrentPage(value);
+                            }}
+                            color="primary"
+                        />
+                    </Stack>
+                ) : (
+                    <Typography variant="h4">Error during loading(</Typography>
+                )}
+            </Box>
         </Container>
     );
 }

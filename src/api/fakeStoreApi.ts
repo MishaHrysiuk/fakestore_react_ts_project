@@ -1,117 +1,144 @@
 import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
 
 export const fakeStoreApi = createApi({
-    reducerPath: "api",
+    reducerPath: "FakeStoreAPI",
     baseQuery: fetchBaseQuery({
         baseUrl: "https://fakestoreapi.com",
     }),
+    tagTypes: ["Products", "Carts", "Users"],
     endpoints: (builder) => ({
-        getAllProducts: builder.query({
+        getAllProducts: builder.query<TProduct[], void>({
             query: () => "/products",
+            providesTags: ["Products"],
         }),
-        getProductById: builder.query({
-            query: (id: number) => `/products/${id}`,
+        getProductById: builder.query<TProduct, number>({
+            query: (id) => `/products/${id}`,
+            providesTags: ["Products"],
         }),
-        getAllCategories: builder.query({
+        getAllCategories: builder.query<string[], void>({
             query: () => "/products/categories",
         }),
-        getProductsByCategory: builder.query({
-            query: (category: string) => `/products/category/${category}`,
+        getProductsByCategory: builder.query<TProduct[], string>({
+            query: (category) => `/products/category/${category}`,
+            providesTags: ["Products"],
         }),
-        addNewProduct: builder.mutation({
-            query: (product: TProduct) => ({
+        addNewProduct: builder.mutation<TProduct, TProduct>({
+            query: (product) => ({
                 url: "/products",
                 method: "POST",
                 body: product,
             }),
+            invalidatesTags: ["Products"],
         }),
-        updateProduct: builder.mutation({
-            query: ({
-                id,
-                product,
-            }: {
+        updateProduct: builder.mutation<
+            TProduct,
+            {
                 id: number;
                 product: Partial<TProduct>;
-            }) => ({
+            }
+        >({
+            query: ({ id, product }) => ({
                 url: `/products/${id}`,
                 method: "PATCH",
                 body: product,
             }),
+            invalidatesTags: ["Products"],
         }),
-        deleteProduct: builder.mutation({
-            query: (id: number) => ({
+        deleteProduct: builder.mutation<TProduct, number>({
+            query: (id) => ({
                 url: `/products/${id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: ["Products"],
         }),
-        getAllCarts: builder.query({
+        getAllCarts: builder.query<TCart[], void>({
             query: () => "/carts",
+            providesTags: ["Carts"],
         }),
-        getCartById: builder.query({
-            query: (id: number) => `/carts/${id}`,
+
+        getCartById: builder.query<TCart, number>({
+            query: (id) => `/carts/${id}`,
+            providesTags: ["Carts"],
         }),
-        getCartsInDateRange: builder.query({
-            query: ({
-                startDate,
-                endDate,
-            }: {
+        getCartsInDateRange: builder.query<
+            TCart[],
+            {
                 startDate: "string";
                 endDate: "string";
-            }) => `/carts?startdate=${startDate}&enddate=${endDate}`,
+            }
+        >({
+            query: ({ startDate, endDate }) =>
+                `/carts?startdate=${startDate}&enddate=${endDate}`,
+            providesTags: ["Carts"],
         }),
-        getUserCarts: builder.query({
-            query: (id: number) => `/carts/user/${id}`,
+        getUserCarts: builder.query<TCart[], number | null>({
+            query: (id) => `/carts/user/${id}`,
+            providesTags: ["Carts"],
         }),
-        addNewCart: builder.mutation({
-            query: (cart: TCart) => ({
+        addNewCart: builder.mutation<TCart, TCart>({
+            query: (cart) => ({
                 url: "/carts",
                 method: "POST",
                 body: cart,
             }),
+            invalidatesTags: ["Carts"],
         }),
-        updateCart: builder.mutation({
-            query: ({ id, cart }: { id: number; cart: Partial<TCart> }) => ({
+        updateCart: builder.mutation<
+            TCart,
+            { id: number; cart: Partial<TCart> }
+        >({
+            query: ({ id, cart }) => ({
                 url: `/carts/${id}`,
                 method: "PUTCH",
                 body: cart,
             }),
+            invalidatesTags: ["Carts"],
         }),
-        deleteCart: builder.mutation({
-            query: (id: number) => ({
+        deleteCart: builder.mutation<TCart, number>({
+            query: (id) => ({
                 url: `/carts/${id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: ["Carts"],
         }),
-        getAllUsers: builder.query({
+        getAllUsers: builder.query<TUser[], void>({
             query: () => "/users",
+            providesTags: ["Users"],
         }),
-        getUserById: builder.query({
-            query: (id: number) => `/users/${id}`,
+        getUserById: builder.query<TUser, number>({
+            query: (id) => `/users/${id}`,
+            providesTags: ["Users"],
         }),
-        addNewUser: builder.mutation({
-            query: (user: TUser) => ({
+        addNewUser: builder.mutation<TUser, TUser>({
+            query: (user) => ({
                 url: "/users",
                 method: "POST",
                 body: user,
             }),
+            invalidatesTags: ["Users"],
         }),
-        updateUser: builder.mutation({
-            query: ({ id, user }: { id: number; user: Partial<TUser> }) => ({
+        updateUser: builder.mutation<
+            TUser,
+            { id: number; user: Partial<TUser> }
+        >({
+            query: ({ id, user }) => ({
                 url: `/users/${id}`,
                 method: "PATCH",
                 body: user,
             }),
+            invalidatesTags: ["Users"],
         }),
-        deleteUser: builder.mutation({
-            query: (id: number) => ({
+        deleteUser: builder.mutation<TUser, number>({
+            query: (id) => ({
                 url: `/users${id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: ["Users"],
         }),
-        loginUser: builder.mutation({
-            query: ({ username, password }: TUserLogin) => ({
+        loginUser: builder.mutation<{ token: string }, TUserLogin>({
+            query: ({ username, password }) => ({
                 url: `/auth/login`,
-                method: "DELETE",
+                method: "POST",
                 body: { username, password },
             }),
         }),
@@ -133,6 +160,7 @@ export type TProductCart = {
 };
 
 export type TCart = {
+    id?: number;
     userId: number;
     date: string;
     products: Array<TProductCart>;
@@ -149,8 +177,8 @@ export type TUserName = {
 };
 
 export type TGeoLocation = {
-    lat: string;
-    long: string;
+    lat: number;
+    long: number;
 };
 
 export type TAddress = {

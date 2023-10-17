@@ -14,7 +14,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 export default function SingleProductPage() {
     const { productId } = useParams();
-    const { data: product = {}, isLoading } = useGetProductByIdQuery(
+    const { data: product, isLoading } = useGetProductByIdQuery(
         +(productId as string)
     );
     const navigate = useNavigate();
@@ -63,8 +63,8 @@ export default function SingleProductPage() {
                                 m: 2,
                                 objectFit: "fill",
                             }}
-                            alt={product.title}
-                            src={product.image}
+                            alt={product?.title}
+                            src={product?.image}
                         />
                         <Box
                             sx={{
@@ -76,7 +76,7 @@ export default function SingleProductPage() {
                                 variant="h3"
                                 component="h1"
                             >
-                                {product.title}
+                                {product?.title}
                             </Typography>
                             <Typography
                                 sx={{ mb: 3 }}
@@ -86,7 +86,7 @@ export default function SingleProductPage() {
                                 <span style={{ fontWeight: 700 }}>
                                     Category:{" "}
                                 </span>{" "}
-                                {product.category}
+                                {product?.category}
                             </Typography>
                             <Typography
                                 sx={{ mb: 3 }}
@@ -96,7 +96,7 @@ export default function SingleProductPage() {
                                 <span style={{ fontWeight: 700 }}>
                                     Description:{" "}
                                 </span>
-                                {product.description}
+                                {product?.description}
                             </Typography>
 
                             <Box
@@ -111,7 +111,7 @@ export default function SingleProductPage() {
                                     component="h2"
                                     sx={{ mr: 5, mb: { xs: 3, sm: 0 } }}
                                 >
-                                    {product.price} $
+                                    {product?.price} $
                                 </Typography>
                                 <Button
                                     variant="contained"
@@ -119,7 +119,7 @@ export default function SingleProductPage() {
                                     startIcon={<ShoppingCartIcon />}
                                     onClick={() =>
                                         enqueueSnackbar(
-                                            `Product №${product.id} added to cart`,
+                                            `Product №${product?.id} added to cart`,
                                             {
                                                 variant: "success",
                                                 autoHideDuration: 3000,
