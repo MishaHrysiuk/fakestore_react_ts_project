@@ -8,9 +8,7 @@ export default function CartProductItem({
 }: {
     product: TProductCart;
 }) {
-    const { data: productInfo, isLoading } = useGetProductByIdQuery(
-        product.productId
-    );
+    const { data: productInfo } = useGetProductByIdQuery(product.productId);
 
     const priceSum = useMemo(() => {
         return product.quantity * (productInfo ? productInfo.price : 0);

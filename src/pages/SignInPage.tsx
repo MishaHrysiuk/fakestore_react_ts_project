@@ -65,7 +65,7 @@ export default function SignIn() {
                 },
             });
         }
-    }, [isLoginSuccess, isLoginError]);
+    }, [isLoginSuccess, isLoginError, dispatch, loginData?.token, navigate]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormValue({ ...formValue, [event.target.name]: event.target.value });

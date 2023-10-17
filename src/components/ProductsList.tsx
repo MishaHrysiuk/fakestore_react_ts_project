@@ -45,7 +45,7 @@ export default function ProductsList(props: {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [search]);
+    }, [setCurrentPage, search]);
 
     const filteredData = useMemo(() => {
         return sortingProducts(searchProduct(props.products, search), sortType);
@@ -56,7 +56,15 @@ export default function ProductsList(props: {
         const startElem = currentPage * countElemOnPage - countElemOnPage;
         const endElem = currentPage * countElemOnPage;
         return filteredData.slice(startElem, endElem);
-    }, [props.products, search, sortType, currentPage]);
+        // eslint-disable-next-line
+    }, [
+        props.products,
+        search,
+        sortType,
+        currentPage,
+        countElemOnPage,
+        filteredData,
+    ]);
 
     return (
         <Container sx={{ py: 5 }} maxWidth="lg">
