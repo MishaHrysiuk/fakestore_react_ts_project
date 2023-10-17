@@ -116,7 +116,15 @@ export default function SignUp() {
             }
         };
         login();
-    }, [isSuccess, isError]);
+    }, [
+        isSuccess,
+        isError,
+        dispatch,
+        isLoginSuccess,
+        loginData?.token,
+        loginUser,
+        navigate,
+    ]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormValue({ ...formValue, [event.target.name]: event.target.value });
