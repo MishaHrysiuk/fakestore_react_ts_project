@@ -21,7 +21,7 @@ import { Link, PaletteMode, Tab, Tabs } from "@mui/material";
 
 import { useNavigate, useMatch } from "react-router-dom";
 
-import { changeSearch, clearSearch, selectSearch } from "../store/searchSlice";
+import { changeSearch, selectSearch } from "../store/searchSlice";
 import { Search, SearchIconWrapper, StyledInputBase } from "./SearchInput";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { logout, selectAuth } from "../store/authSlice";
@@ -52,7 +52,6 @@ function Header(props: ThemeProps) {
     };
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
-        dispatch(clearSearch());
     };
 
     const handleCloseNavMenu = () => {

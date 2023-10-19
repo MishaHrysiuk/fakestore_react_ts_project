@@ -213,6 +213,7 @@ export const {
     useGetCartsInDateRangeQuery,
     useGetProductsByCategoryQuery,
     useGetProductByIdQuery,
+    useLazyGetProductByIdQuery,
     useGetUserByIdQuery,
     useGetUserCartsQuery,
     useUpdateCartMutation,

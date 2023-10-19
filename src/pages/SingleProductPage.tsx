@@ -11,12 +11,19 @@ import { useGetProductByIdQuery } from "../api/fakeStoreApi";
 import { enqueueSnackbar } from "notistack";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { addProductToCart } from "../store/localCartSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { selectAuth } from "../store/authSlice";
 
 export default function SingleProductPage() {
     const { productId } = useParams();
     const { data: product, isLoading } = useGetProductByIdQuery(
         +(productId as string)
     );
+
+    const { id } = useAppSelector(selectAuth);
+    const dispatch = useAppDispatch();
+
     const navigate = useNavigate();
 
     return (
@@ -117,7 +124,14 @@ export default function SingleProductPage() {
                                     variant="contained"
                                     color="success"
                                     startIcon={<ShoppingCartIcon />}
-                                    onClick={() =>
+                                    onClick={() => {
+                                        dispatch(
+                                            addProductToCart({
+                                                userId: id as number,
+                                                productId:
+                                                    product?.id as number,
+                                            })
+                                        );
                                         enqueueSnackbar(
                                             `Product №${product?.id} added to cart`,
                                             {
@@ -128,8 +142,8 @@ export default function SingleProductPage() {
                                                     vertical: "bottom",
                                                 },
                                             }
-                                        )
-                                    }
+                                        );
+                                    }}
                                 >
                                     Add to cart
                                 </Button>

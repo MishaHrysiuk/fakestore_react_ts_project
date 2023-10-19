@@ -3,12 +3,23 @@ import { TProductCart, useGetProductByIdQuery } from "../../api/fakeStoreApi";
 import { useMemo } from "react";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+    decreaseQuantityOfProduct,
+    increaseQuantityOfProduct,
+    selectLocalCart,
+} from "../../store/localCartSlice";
+import { selectAuth } from "../../store/authSlice";
 export default function CartProductItem({
     product,
 }: {
     product: TProductCart;
 }) {
     const { data: productInfo } = useGetProductByIdQuery(product.productId);
+
+    const dispatch = useAppDispatch();
+    const { id } = useAppSelector(selectAuth);
+    const { showLocalCart } = useAppSelector(selectLocalCart);
 
     const priceSum = useMemo(() => {
         return product.quantity * (productInfo ? productInfo.price : 0);
@@ -62,7 +73,19 @@ export default function CartProductItem({
                     align="center"
                     sx={{ display: { xs: "none", sm: "table-cell" } }}
                 >
-                    <IconButton size="large" color="error">
+                    <IconButton
+                        size="large"
+                        color="error"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                decreaseQuantityOfProduct({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                })
+                            );
+                        }}
+                    >
                         <RemoveCircleOutlineIcon />
                     </IconButton>
                     <TextField
@@ -75,7 +98,19 @@ export default function CartProductItem({
                         size="small"
                         sx={{ width: 50, mt: 0.5 }}
                     />
-                    <IconButton size="large" color="success">
+                    <IconButton
+                        size="large"
+                        color="success"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                increaseQuantityOfProduct({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                })
+                            );
+                        }}
+                    >
                         <AddCircleOutlineIcon />
                     </IconButton>
                 </TableCell>
@@ -96,7 +131,19 @@ export default function CartProductItem({
                     colSpan={3}
                     align="center"
                 >
-                    <IconButton size="large" color="error">
+                    <IconButton
+                        size="large"
+                        color="error"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                decreaseQuantityOfProduct({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                })
+                            );
+                        }}
+                    >
                         <RemoveCircleOutlineIcon />
                     </IconButton>
                     <TextField
@@ -109,7 +156,19 @@ export default function CartProductItem({
                         size="small"
                         sx={{ width: 50, mt: 0.5 }}
                     />
-                    <IconButton size="large" color="success">
+                    <IconButton
+                        size="large"
+                        color="success"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                increaseQuantityOfProduct({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                })
+                            );
+                        }}
+                    >
                         <AddCircleOutlineIcon />
                     </IconButton>
                 </TableCell>

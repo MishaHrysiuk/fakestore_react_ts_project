@@ -27,6 +27,8 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { TSort, changeSortType, selectSearch } from "../store/searchSlice";
 import usePagging from "../hooks/usePaginate";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { selectAuth } from "../store/authSlice";
+import { addProductToCart, createCart } from "../store/localCartSlice";
 
 export default function ProductsList(props: {
     isLoading: boolean;
@@ -37,6 +39,8 @@ export default function ProductsList(props: {
     const navigate = useNavigate();
 
     const { search, sortType } = useAppSelector(selectSearch);
+    const { id } = useAppSelector(selectAuth);
+
     const dispatch = useAppDispatch();
 
     const { searchProduct, sortingProducts } = useFiltering();
@@ -47,16 +51,20 @@ export default function ProductsList(props: {
         setCurrentPage(1);
     }, [setCurrentPage, search]);
 
+    useEffect(() => {
+        if (id) {
+            dispatch(createCart({ userId: id }));
+        }
+    });
+
     const filteredData = useMemo(() => {
         return sortingProducts(searchProduct(props.products, search), sortType);
-        // eslint-disable-next-line
-    }, [props.products, search, sortType]);
+    }, [props.products, search, sortType, searchProduct, sortingProducts]);
 
     const paginatedData = useMemo(() => {
         const startElem = currentPage * countElemOnPage - countElemOnPage;
         const endElem = currentPage * countElemOnPage;
         return filteredData.slice(startElem, endElem);
-        // eslint-disable-next-line
     }, [
         props.products,
         search,
@@ -163,7 +171,14 @@ export default function ProductsList(props: {
                                         variant="outlined"
                                         color="success"
                                         startIcon={<ShoppingCartIcon />}
-                                        onClick={() =>
+                                        onClick={() => {
+                                            dispatch(
+                                                addProductToCart({
+                                                    userId: id as number,
+                                                    productId:
+                                                        product.id as number,
+                                                })
+                                            );
                                             enqueueSnackbar(
                                                 `Product №${product.id} added to cart`,
                                                 {
@@ -174,8 +189,8 @@ export default function ProductsList(props: {
                                                         vertical: "bottom",
                                                     },
                                                 }
-                                            )
-                                        }
+                                            );
+                                        }}
                                     >
                                         Add to cart
                                     </Button>
