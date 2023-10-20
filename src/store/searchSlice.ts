@@ -33,7 +33,9 @@ export const searchSlice = createSlice({
     },
 });
 
-export const selectSearch = (state: RootState) => state.search;
+export const selectSearch: (state: RootState) => ISearchState = (
+    state: RootState,
+) => state.search;
 
 export const { changeSearch, clearSearch, changeSortType, clearSortType } =
     searchSlice.actions;

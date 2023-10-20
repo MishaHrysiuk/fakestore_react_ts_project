@@ -25,7 +25,7 @@ export const localCartSlice = createSlice({
         createCart: (state, action: PayloadAction<{ userId: number }>) => {
             if (
                 !state.carts.filter(
-                    (cart) => cart.userId === action.payload.userId
+                    (cart) => cart.userId === action.payload.userId,
                 )[0]
             ) {
                 const newCartList = [
@@ -48,19 +48,19 @@ export const localCartSlice = createSlice({
         },
         addProductToCart: (
             state,
-            action: PayloadAction<{ userId: number; productId: number }>
+            action: PayloadAction<{ userId: number; productId: number }>,
         ) => {
             const otherCarts = state.carts.filter(
-                (cart) => cart.userId !== action.payload.userId
+                (cart) => cart.userId !== action.payload.userId,
             );
             const userCart = state.carts.filter(
-                (cart) => cart.userId === action.payload.userId
+                (cart) => cart.userId === action.payload.userId,
             )[0];
             const userProducts = userCart.products;
 
             if (
                 userProducts.every(
-                    (product) => product.productId !== action.payload.productId
+                    (product) => product.productId !== action.payload.productId,
                 )
             ) {
                 userProducts.push({
@@ -73,7 +73,7 @@ export const localCartSlice = createSlice({
                 };
                 localStorage.setItem(
                     "cart-list",
-                    JSON.stringify([...otherCarts, newUserCart])
+                    JSON.stringify([...otherCarts, newUserCart]),
                 );
 
                 state.carts = [...otherCarts, newUserCart];
@@ -81,23 +81,23 @@ export const localCartSlice = createSlice({
         },
         deleteProductFromCart: (
             state,
-            action: PayloadAction<{ userId: number; productId: number }>
+            action: PayloadAction<{ userId: number; productId: number }>,
         ) => {
             const otherCarts = state.carts.filter(
-                (cart) => cart.userId !== action.payload.userId
+                (cart) => cart.userId !== action.payload.userId,
             );
             const userCart = state.carts.filter(
-                (cart) => cart.userId === action.payload.userId
+                (cart) => cart.userId === action.payload.userId,
             )[0];
             const userProducts = userCart.products;
 
             if (
                 userProducts.some(
-                    (product) => product.productId === action.payload.productId
+                    (product) => product.productId === action.payload.productId,
                 )
             ) {
                 const index = userProducts.findIndex(
-                    (product) => product.productId === action.payload.productId
+                    (product) => product.productId === action.payload.productId,
                 );
                 userProducts.splice(index, 1);
                 const newUserCart = {
@@ -106,7 +106,7 @@ export const localCartSlice = createSlice({
                 };
                 localStorage.setItem(
                     "cart-list",
-                    JSON.stringify([...otherCarts, newUserCart])
+                    JSON.stringify([...otherCarts, newUserCart]),
                 );
 
                 state.carts = [...otherCarts, newUserCart];
@@ -114,23 +114,23 @@ export const localCartSlice = createSlice({
         },
         increaseQuantityOfProduct: (
             state,
-            action: PayloadAction<{ userId: number; productId: number }>
+            action: PayloadAction<{ userId: number; productId: number }>,
         ) => {
             const otherCarts = state.carts.filter(
-                (cart) => cart.userId !== action.payload.userId
+                (cart) => cart.userId !== action.payload.userId,
             );
             const userCart = state.carts.filter(
-                (cart) => cart.userId === action.payload.userId
+                (cart) => cart.userId === action.payload.userId,
             )[0];
             const userProducts = userCart.products;
 
             if (
                 userProducts.some(
-                    (product) => product.productId === action.payload.productId
+                    (product) => product.productId === action.payload.productId,
                 )
             ) {
                 const index = userProducts.findIndex(
-                    (product) => product.productId === action.payload.productId
+                    (product) => product.productId === action.payload.productId,
                 );
                 userProducts[index].quantity++;
                 const newUserCart = {
@@ -139,7 +139,7 @@ export const localCartSlice = createSlice({
                 };
                 localStorage.setItem(
                     "cart-list",
-                    JSON.stringify([...otherCarts, newUserCart])
+                    JSON.stringify([...otherCarts, newUserCart]),
                 );
 
                 state.carts = [...otherCarts, newUserCart];
@@ -147,23 +147,23 @@ export const localCartSlice = createSlice({
         },
         decreaseQuantityOfProduct: (
             state,
-            action: PayloadAction<{ userId: number; productId: number }>
+            action: PayloadAction<{ userId: number; productId: number }>,
         ) => {
             const otherCarts = state.carts.filter(
-                (cart) => cart.userId !== action.payload.userId
+                (cart) => cart.userId !== action.payload.userId,
             );
             const userCart = state.carts.filter(
-                (cart) => cart.userId === action.payload.userId
+                (cart) => cart.userId === action.payload.userId,
             )[0];
             const userProducts = userCart.products;
 
             if (
                 userProducts.some(
-                    (product) => product.productId === action.payload.productId
+                    (product) => product.productId === action.payload.productId,
                 )
             ) {
                 const index = userProducts.findIndex(
-                    (product) => product.productId === action.payload.productId
+                    (product) => product.productId === action.payload.productId,
                 );
                 if (userProducts[index].quantity === 1) {
                     userProducts.splice(index, 1);
@@ -176,7 +176,7 @@ export const localCartSlice = createSlice({
                 };
                 localStorage.setItem(
                     "cart-list",
-                    JSON.stringify([...otherCarts, newUserCart])
+                    JSON.stringify([...otherCarts, newUserCart]),
                 );
 
                 state.carts = [...otherCarts, newUserCart];
@@ -185,7 +185,9 @@ export const localCartSlice = createSlice({
     },
 });
 
-export const selectLocalCart = (state: RootState) => state.localCart;
+export const selectLocalCart: (state: RootState) => ILocalCartState = (
+    state: RootState,
+) => state.localCart;
 
 export const {
     setCartList,

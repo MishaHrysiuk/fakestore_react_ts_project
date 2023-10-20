@@ -11,6 +11,7 @@ import {
     InputLabel,
     MenuItem,
     Pagination,
+    Rating,
     Select,
     Stack,
     Typography,
@@ -77,7 +78,11 @@ export default function ProductsList(props: {
     return (
         <Container sx={{ py: 5 }} maxWidth="lg">
             <Box
-                sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 2,
+                }}
             >
                 <Button
                     color="inherit"
@@ -121,7 +126,7 @@ export default function ProductsList(props: {
                         >
                             <Card
                                 sx={{
-                                    height: "30rem",
+                                    height: "32rem",
                                     display: "flex",
                                     flexDirection: "column",
                                 }}
@@ -134,7 +139,11 @@ export default function ProductsList(props: {
                                     }}
                                     image={product.image}
                                 />
-                                <CardContent sx={{ flexGrow: 1 }}>
+                                <CardContent
+                                    sx={{
+                                        flexGrow: 1,
+                                    }}
+                                >
                                     <Typography
                                         gutterBottom
                                         variant="h5"
@@ -149,7 +158,14 @@ export default function ProductsList(props: {
                                     >
                                         {product.title}
                                     </Typography>
-                                    <Typography>{product.price} $</Typography>
+                                    <Typography gutterBottom>
+                                        {product.price} $
+                                    </Typography>
+                                    <Rating
+                                        value={product.rating.rate}
+                                        precision={0.1}
+                                        readOnly
+                                    />
                                 </CardContent>
                                 <CardActions
                                     sx={{
@@ -177,7 +193,7 @@ export default function ProductsList(props: {
                                                     userId: id as number,
                                                     productId:
                                                         product.id as number,
-                                                })
+                                                }),
                                             );
                                             enqueueSnackbar(
                                                 `Product №${product.id} added to cart`,
@@ -188,7 +204,7 @@ export default function ProductsList(props: {
                                                         horizontal: "right",
                                                         vertical: "bottom",
                                                     },
-                                                }
+                                                },
                                             );
                                         }}
                                     >

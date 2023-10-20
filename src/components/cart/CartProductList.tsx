@@ -7,7 +7,6 @@ import {
 } from "@mui/material";
 import CartProductItem from "./CartProductItem";
 import { TCart, TProductCart } from "../../api/fakeStoreApi";
-import { useMemo } from "react";
 
 export default function CartProductList({ cart }: { cart: TCart }) {
     return (

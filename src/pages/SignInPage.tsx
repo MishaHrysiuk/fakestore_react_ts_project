@@ -16,6 +16,11 @@ import jwtDecode from "jwt-decode";
 import { enqueueSnackbar } from "notistack";
 import LoadingButton from "@mui/lab/LoadingButton";
 
+export type TUserToken = {
+    sub: number;
+    token: string;
+};
+
 export default function SignIn() {
     const [formValue, setFormValue] = useState<{
         username: string;
@@ -30,7 +35,7 @@ export default function SignIn() {
     const [
         loginUser,
         {
-            data: loginData,
+            data: loginData = { token: "" },
             isSuccess: isLoginSuccess,
             isError: isLoginError,
             isLoading: isLoginLoading,
@@ -41,9 +46,9 @@ export default function SignIn() {
         if (isLoginSuccess) {
             dispatch(
                 setUser({
-                    id: (jwtDecode(loginData?.token as string) as any).sub,
-                    token: loginData?.token as string,
-                })
+                    id: (jwtDecode(loginData.token) as TUserToken).sub,
+                    token: loginData.token,
+                }),
             );
             enqueueSnackbar("User Login Succesfully", {
                 variant: "success",
@@ -150,7 +155,7 @@ export default function SignIn() {
                                 onClick={() => navigate("/signup")}
                                 variant="body2"
                             >
-                                Don't have an account? Sign Up
+                                {"Don't have an account? Sign Up"}
                             </Link>
                         </Grid>
                     </Grid>

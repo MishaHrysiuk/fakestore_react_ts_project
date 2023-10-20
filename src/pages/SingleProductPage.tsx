@@ -18,7 +18,7 @@ import { selectAuth } from "../store/authSlice";
 export default function SingleProductPage() {
     const { productId } = useParams();
     const { data: product, isLoading } = useGetProductByIdQuery(
-        +(productId as string)
+        +(productId as string),
     );
 
     const { id } = useAppSelector(selectAuth);
@@ -130,7 +130,7 @@ export default function SingleProductPage() {
                                                 userId: id as number,
                                                 productId:
                                                     product?.id as number,
-                                            })
+                                            }),
                                         );
                                         enqueueSnackbar(
                                             `Product №${product?.id} added to cart`,
@@ -141,7 +141,7 @@ export default function SingleProductPage() {
                                                     horizontal: "right",
                                                     vertical: "bottom",
                                                 },
-                                            }
+                                            },
                                         );
                                     }}
                                 >

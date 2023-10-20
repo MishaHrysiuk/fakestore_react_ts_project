@@ -22,7 +22,9 @@ export default function CartProductItem({
     const { showLocalCart } = useAppSelector(selectLocalCart);
 
     const priceSum = useMemo(() => {
-        return product.quantity * (productInfo ? productInfo.price : 0);
+        return (
+            product.quantity * (productInfo ? productInfo.price : 0)
+        ).toFixed(2);
     }, [product, productInfo]);
 
     return (
@@ -82,7 +84,7 @@ export default function CartProductItem({
                                 decreaseQuantityOfProduct({
                                     userId: id as number,
                                     productId: productInfo?.id as number,
-                                })
+                                }),
                             );
                         }}
                     >
@@ -107,7 +109,7 @@ export default function CartProductItem({
                                 increaseQuantityOfProduct({
                                     userId: id as number,
                                     productId: productInfo?.id as number,
-                                })
+                                }),
                             );
                         }}
                     >
@@ -140,7 +142,7 @@ export default function CartProductItem({
                                 decreaseQuantityOfProduct({
                                     userId: id as number,
                                     productId: productInfo?.id as number,
-                                })
+                                }),
                             );
                         }}
                     >
@@ -165,7 +167,7 @@ export default function CartProductItem({
                                 increaseQuantityOfProduct({
                                     userId: id as number,
                                     productId: productInfo?.id as number,
-                                })
+                                }),
                             );
                         }}
                     >

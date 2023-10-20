@@ -16,7 +16,7 @@ export default function useFiltering() {
                 item.title.toLowerCase().indexOf(term.toLowerCase()) > -1 ||
                 item.description.toLowerCase().indexOf(term.toLowerCase()) >
                     -1 ||
-                item.category.toLowerCase().indexOf(term.toLowerCase()) > -1
+                item.category.toLowerCase().indexOf(term.toLowerCase()) > -1,
         );
     };
 

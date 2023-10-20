@@ -152,6 +152,10 @@ export type TProduct = {
     description: string;
     image: string;
     category: string;
+    rating: {
+        rate: number;
+        count: number;
+    };
 };
 
 export type TProductCart = {

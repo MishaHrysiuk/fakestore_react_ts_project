@@ -299,7 +299,7 @@ function Header(props: ThemeProps) {
                                                         horizontal: "right",
                                                         vertical: "bottom",
                                                     },
-                                                }
+                                                },
                                             );
                                         }}
                                     >
@@ -322,7 +322,7 @@ function Header(props: ThemeProps) {
                                         value={search}
                                         onChange={(e) =>
                                             dispatch(
-                                                changeSearch(e.target.value)
+                                                changeSearch(e.target.value),
                                             )
                                         }
                                     />
