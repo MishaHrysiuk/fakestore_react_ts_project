@@ -18,15 +18,18 @@ import { useAppDispatch } from "./store/hooks";
 import { selectAuth, setUser } from "./store/authSlice";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { setCartList } from "./store/localCartSlice";
 
 export default function App() {
     const { theme, switchTheme, defaultTheme } = useThemeStyle();
     const dispatch = useAppDispatch();
     const { token } = useSelector(selectAuth);
     const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const cartList = JSON.parse(localStorage.getItem("cart-list") || "[]");
 
     useEffect(() => {
         dispatch(setUser(user));
+        dispatch(setCartList(cartList));
     });
 
     return (
@@ -67,10 +70,6 @@ export default function App() {
                                 }
                             />
                             <Route
-                                path="*"
-                                element={<Navigate to="/" replace={true} />}
-                            />
-                            <Route
                                 path="cart"
                                 element={
                                     token ? (
@@ -79,6 +78,10 @@ export default function App() {
                                         <Navigate to="/signin" replace={true} />
                                     )
                                 }
+                            />
+                            <Route
+                                path="*"
+                                element={<Navigate to="/" replace={true} />}
                             />
                         </Routes>
                     </main>

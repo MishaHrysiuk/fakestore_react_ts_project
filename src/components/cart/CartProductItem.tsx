@@ -3,6 +3,16 @@ import { TProductCart, useGetProductByIdQuery } from "../../api/fakeStoreApi";
 import { useMemo } from "react";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+    decreaseQuantityOfProduct,
+    deleteProductFromCart,
+    increaseQuantityOfProduct,
+    selectLocalCart,
+} from "../../store/localCartSlice";
+import { selectAuth } from "../../store/authSlice";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 export default function CartProductItem({
     product,
 }: {
@@ -10,8 +20,14 @@ export default function CartProductItem({
 }) {
     const { data: productInfo } = useGetProductByIdQuery(product.productId);
 
+    const dispatch = useAppDispatch();
+    const { id } = useAppSelector(selectAuth);
+    const { showLocalCart } = useAppSelector(selectLocalCart);
+
     const priceSum = useMemo(() => {
-        return product.quantity * (productInfo ? productInfo.price : 0);
+        return (
+            product.quantity * (productInfo ? productInfo.price : 0)
+        ).toFixed(2);
     }, [product, productInfo]);
 
     return (
@@ -58,11 +74,23 @@ export default function CartProductItem({
                 </TableCell>
                 <TableCell width={100}>{priceSum} $ </TableCell>
                 <TableCell
-                    width={180}
+                    width={230}
                     align="center"
                     sx={{ display: { xs: "none", sm: "table-cell" } }}
                 >
-                    <IconButton size="large" color="error">
+                    <IconButton
+                        size="large"
+                        color="error"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                decreaseQuantityOfProduct({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                }),
+                            );
+                        }}
+                    >
                         <RemoveCircleOutlineIcon />
                     </IconButton>
                     <TextField
@@ -75,8 +103,35 @@ export default function CartProductItem({
                         size="small"
                         sx={{ width: 50, mt: 0.5 }}
                     />
-                    <IconButton size="large" color="success">
+                    <IconButton
+                        size="large"
+                        color="success"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                increaseQuantityOfProduct({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                }),
+                            );
+                        }}
+                    >
                         <AddCircleOutlineIcon />
+                    </IconButton>
+                    <IconButton
+                        size="large"
+                        color="error"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                deleteProductFromCart({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                }),
+                            );
+                        }}
+                    >
+                        <DeleteIcon />
                     </IconButton>
                 </TableCell>
             </TableRow>
@@ -96,7 +151,19 @@ export default function CartProductItem({
                     colSpan={3}
                     align="center"
                 >
-                    <IconButton size="large" color="error">
+                    <IconButton
+                        size="large"
+                        color="error"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                decreaseQuantityOfProduct({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                }),
+                            );
+                        }}
+                    >
                         <RemoveCircleOutlineIcon />
                     </IconButton>
                     <TextField
@@ -109,8 +176,35 @@ export default function CartProductItem({
                         size="small"
                         sx={{ width: 50, mt: 0.5 }}
                     />
-                    <IconButton size="large" color="success">
+                    <IconButton
+                        size="large"
+                        color="success"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                increaseQuantityOfProduct({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                }),
+                            );
+                        }}
+                    >
                         <AddCircleOutlineIcon />
+                    </IconButton>
+                    <IconButton
+                        size="large"
+                        color="error"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                deleteProductFromCart({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                }),
+                            );
+                        }}
+                    >
+                        <DeleteIcon />
                     </IconButton>
                 </TableCell>
             </TableRow>

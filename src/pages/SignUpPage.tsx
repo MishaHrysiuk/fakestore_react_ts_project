@@ -1,4 +1,3 @@
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -19,6 +18,7 @@ import { LoadingButton } from "@mui/lab";
 import { enqueueSnackbar } from "notistack";
 import jwtDecode from "jwt-decode";
 import { setUser } from "../store/authSlice";
+import { TUserToken } from "./SignInPage";
 
 export default function SignUp() {
     const [formValue, setFormValue] = useState<{
@@ -67,8 +67,10 @@ export default function SignUp() {
     const [createUser, { isSuccess, isError, isLoading }] =
         useAddNewUserMutation();
 
-    const [loginUser, { data: loginData, isSuccess: isLoginSuccess }] =
-        useLoginUserMutation();
+    const [
+        loginUser,
+        { data: loginData = { token: "" }, isSuccess: isLoginSuccess },
+    ] = useLoginUserMutation();
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition((pos) => {
@@ -90,9 +92,9 @@ export default function SignUp() {
             if (isSuccess && isLoginSuccess) {
                 dispatch(
                     setUser({
-                        id: (jwtDecode(loginData?.token as string) as any).sub,
-                        token: loginData?.token as string,
-                    })
+                        id: (jwtDecode(loginData.token) as TUserToken).sub,
+                        token: loginData.token,
+                    }),
                 );
                 enqueueSnackbar("User Register Login Succesfully", {
                     variant: "success",

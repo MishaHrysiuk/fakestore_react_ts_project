@@ -9,14 +9,21 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetProductByIdQuery } from "../api/fakeStoreApi";
 import { enqueueSnackbar } from "notistack";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { addProductToCart } from "../store/localCartSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { selectAuth } from "../store/authSlice";
 
 export default function SingleProductPage() {
     const { productId } = useParams();
     const { data: product, isLoading } = useGetProductByIdQuery(
-        +(productId as string)
+        +(productId as string),
     );
+
+    const { id, token } = useAppSelector(selectAuth);
+    const dispatch = useAppDispatch();
+
     const navigate = useNavigate();
 
     return (
@@ -116,20 +123,42 @@ export default function SingleProductPage() {
                                 <Button
                                     variant="contained"
                                     color="success"
-                                    startIcon={<ShoppingCartIcon />}
-                                    onClick={() =>
-                                        enqueueSnackbar(
-                                            `Product №${product?.id} added to cart`,
-                                            {
-                                                variant: "success",
-                                                autoHideDuration: 3000,
-                                                anchorOrigin: {
-                                                    horizontal: "right",
-                                                    vertical: "bottom",
+                                    startIcon={<AddShoppingCartIcon />}
+                                    onClick={() => {
+                                        if (token) {
+                                            dispatch(
+                                                addProductToCart({
+                                                    userId: id as number,
+                                                    productId:
+                                                        product?.id as number,
+                                                }),
+                                            );
+                                            enqueueSnackbar(
+                                                `Product "${product?.title}" added to cart`,
+                                                {
+                                                    variant: "success",
+                                                    autoHideDuration: 3000,
+                                                    anchorOrigin: {
+                                                        horizontal: "right",
+                                                        vertical: "bottom",
+                                                    },
                                                 },
-                                            }
-                                        )
-                                    }
+                                            );
+                                        } else {
+                                            enqueueSnackbar(
+                                                `Please login for adding products to cart`,
+                                                {
+                                                    variant: "error",
+                                                    autoHideDuration: 3000,
+                                                    anchorOrigin: {
+                                                        horizontal: "right",
+                                                        vertical: "bottom",
+                                                    },
+                                                },
+                                            );
+                                            navigate("/signin");
+                                        }
+                                    }}
                                 >
                                     Add to cart
                                 </Button>

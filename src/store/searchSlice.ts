@@ -2,16 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from ".";
 
-export type TSort = "norm" | "exp" | "chp";
+export type TSort = "default" | "exp" | "chp";
 
 export interface ISearchState {
     search: string;
     sortType: TSort;
+    elementCountOnPage: number;
 }
 
 const initialState: ISearchState = {
     search: "",
-    sortType: "norm",
+    sortType: "default",
+    elementCountOnPage: 4,
 };
 
 export const searchSlice = createSlice({
@@ -28,14 +30,24 @@ export const searchSlice = createSlice({
             state.sortType = action.payload;
         },
         clearSortType: (state) => {
-            state.sortType = "norm";
+            state.sortType = "default";
+        },
+        changeElementCountOnPage: (state, action: PayloadAction<number>) => {
+            state.elementCountOnPage = action.payload;
         },
     },
 });
 
-export const selectSearch = (state: RootState) => state.search;
+export const selectSearch: (state: RootState) => ISearchState = (
+    state: RootState,
+) => state.search;
 
-export const { changeSearch, clearSearch, changeSortType, clearSortType } =
-    searchSlice.actions;
+export const {
+    changeSearch,
+    clearSearch,
+    changeSortType,
+    clearSortType,
+    changeElementCountOnPage,
+} = searchSlice.actions;
 
 export default searchSlice.reducer;

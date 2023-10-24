@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function usePagging<T>(startPage = 1, elemOnPage = 4) {
+export default function usePagging<T>(elemOnPage: number, startPage = 1) {
     const [currentPage, setCurrentPage] = useState(startPage);
     const [countElemOnPage, setCountElemOnPage] = useState(elemOnPage);
 
