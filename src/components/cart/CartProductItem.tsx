@@ -6,10 +6,13 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
     decreaseQuantityOfProduct,
+    deleteProductFromCart,
     increaseQuantityOfProduct,
     selectLocalCart,
 } from "../../store/localCartSlice";
 import { selectAuth } from "../../store/authSlice";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 export default function CartProductItem({
     product,
 }: {
@@ -71,7 +74,7 @@ export default function CartProductItem({
                 </TableCell>
                 <TableCell width={100}>{priceSum} $ </TableCell>
                 <TableCell
-                    width={180}
+                    width={230}
                     align="center"
                     sx={{ display: { xs: "none", sm: "table-cell" } }}
                 >
@@ -114,6 +117,21 @@ export default function CartProductItem({
                         }}
                     >
                         <AddCircleOutlineIcon />
+                    </IconButton>
+                    <IconButton
+                        size="large"
+                        color="error"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                deleteProductFromCart({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                }),
+                            );
+                        }}
+                    >
+                        <DeleteIcon />
                     </IconButton>
                 </TableCell>
             </TableRow>
@@ -172,6 +190,21 @@ export default function CartProductItem({
                         }}
                     >
                         <AddCircleOutlineIcon />
+                    </IconButton>
+                    <IconButton
+                        size="large"
+                        color="error"
+                        disabled={!showLocalCart}
+                        onClick={() => {
+                            dispatch(
+                                deleteProductFromCart({
+                                    userId: id as number,
+                                    productId: productInfo?.id as number,
+                                }),
+                            );
+                        }}
+                    >
+                        <DeleteIcon />
                     </IconButton>
                 </TableCell>
             </TableRow>

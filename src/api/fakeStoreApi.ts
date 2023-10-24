@@ -105,7 +105,7 @@ export const fakeStoreApi = createApi({
             query: () => "/users",
             providesTags: ["Users"],
         }),
-        getUserById: builder.query<TUser, number>({
+        getUserById: builder.query<TUser, number | null>({
             query: (id) => `/users/${id}`,
             providesTags: ["Users"],
         }),
@@ -224,4 +224,5 @@ export const {
     useLoginUserMutation,
     useUpdateProductMutation,
     useUpdateUserMutation,
+    useLazyGetUserByIdQuery,
 } = fakeStoreApi;

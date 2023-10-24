@@ -18,14 +18,19 @@ import {
 } from "@mui/material";
 import CardLoadingSkeleton from "../components/CardLoadingSkeleton";
 import { TProduct } from "../api/fakeStoreApi";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchIcon from "@mui/icons-material/Search";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import useFiltering from "../hooks/useFiltering";
 import { useEffect, useMemo } from "react";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { TSort, changeSortType, selectSearch } from "../store/searchSlice";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import {
+    TSort,
+    changeElementCountOnPage,
+    changeSortType,
+    selectSearch,
+} from "../store/searchSlice";
 import usePagging from "../hooks/usePaginate";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { selectAuth } from "../store/authSlice";
@@ -39,18 +44,24 @@ export default function ProductsList(props: {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
 
-    const { search, sortType } = useAppSelector(selectSearch);
-    const { id } = useAppSelector(selectAuth);
+    const { search, sortType, elementCountOnPage } =
+        useAppSelector(selectSearch);
+    const { id, token } = useAppSelector(selectAuth);
 
     const dispatch = useAppDispatch();
 
     const { searchProduct, sortingProducts } = useFiltering();
-    const { currentPage, countElemOnPage, setCurrentPage, getAllPages } =
-        usePagging<TProduct>();
+    const {
+        currentPage,
+        countElemOnPage,
+        setCurrentPage,
+        getAllPages,
+        setCountElemOnPage,
+    } = usePagging<TProduct>(elementCountOnPage);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [setCurrentPage, search]);
+    }, [setCurrentPage, search, props.products, countElemOnPage]);
 
     useEffect(() => {
         if (id) {
@@ -104,7 +115,7 @@ export default function ProductsList(props: {
                             dispatch(changeSortType(e.target.value as TSort))
                         }
                     >
-                        <MenuItem value="norm">Normal</MenuItem>
+                        <MenuItem value="default">Default</MenuItem>
                         <MenuItem value="chp">First cheap</MenuItem>
                         <MenuItem value="exp">First expensive</MenuItem>
                     </Select>
@@ -186,26 +197,41 @@ export default function ProductsList(props: {
                                     <Button
                                         variant="outlined"
                                         color="success"
-                                        startIcon={<ShoppingCartIcon />}
+                                        startIcon={<AddShoppingCartIcon />}
                                         onClick={() => {
-                                            dispatch(
-                                                addProductToCart({
-                                                    userId: id as number,
-                                                    productId:
-                                                        product.id as number,
-                                                }),
-                                            );
-                                            enqueueSnackbar(
-                                                `Product №${product.id} added to cart`,
-                                                {
-                                                    variant: "success",
-                                                    autoHideDuration: 3000,
-                                                    anchorOrigin: {
-                                                        horizontal: "right",
-                                                        vertical: "bottom",
+                                            if (token) {
+                                                dispatch(
+                                                    addProductToCart({
+                                                        userId: id as number,
+                                                        productId:
+                                                            product.id as number,
+                                                    }),
+                                                );
+                                                enqueueSnackbar(
+                                                    `Product "${product?.title}" added to cart`,
+                                                    {
+                                                        variant: "success",
+                                                        autoHideDuration: 3000,
+                                                        anchorOrigin: {
+                                                            horizontal: "right",
+                                                            vertical: "bottom",
+                                                        },
                                                     },
-                                                },
-                                            );
+                                                );
+                                            } else {
+                                                enqueueSnackbar(
+                                                    `Please login for adding products to cart`,
+                                                    {
+                                                        variant: "error",
+                                                        autoHideDuration: 3000,
+                                                        anchorOrigin: {
+                                                            horizontal: "right",
+                                                            vertical: "bottom",
+                                                        },
+                                                    },
+                                                );
+                                                navigate("/signin");
+                                            }
                                         }}
                                     >
                                         Add to cart
@@ -219,7 +245,9 @@ export default function ProductsList(props: {
             <Box
                 sx={{
                     display: "flex",
-                    justifyContent: "center",
+                    // justifyContent: "center",
+                    flexDirection: "column",
+                    alignItems: "center",
                     mt: 3,
                 }}
             >
@@ -228,16 +256,37 @@ export default function ProductsList(props: {
                 props.isSuccess ? (
                     <Typography variant="h4">Not Found :(</Typography>
                 ) : paginatedData.length !== 0 && props.isSuccess ? (
-                    <Stack spacing={2}>
-                        <Pagination
-                            count={getAllPages(filteredData)}
-                            page={currentPage}
-                            onChange={(e, value) => {
-                                setCurrentPage(value);
-                            }}
-                            color="primary"
-                        />
-                    </Stack>
+                    <>
+                        <Stack spacing={2}>
+                            <Pagination
+                                count={getAllPages(filteredData)}
+                                page={currentPage}
+                                onChange={(e, value) => {
+                                    setCurrentPage(value);
+                                }}
+                                color="primary"
+                            />
+                        </Stack>
+                        <FormControl sx={{ width: 60, mt: 2 }}>
+                            <Select
+                                value={elementCountOnPage}
+                                onChange={(e) => {
+                                    dispatch(
+                                        changeElementCountOnPage(
+                                            e.target.value as number,
+                                        ),
+                                    );
+                                    setCountElemOnPage(
+                                        e.target.value as number,
+                                    );
+                                }}
+                            >
+                                <MenuItem value={2}>2</MenuItem>
+                                <MenuItem value={4}>4</MenuItem>
+                                <MenuItem value={6}>6</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </>
                 ) : (
                     <Typography variant="h4">Error during loading(</Typography>
                 )}

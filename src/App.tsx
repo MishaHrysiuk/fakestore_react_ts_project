@@ -70,10 +70,6 @@ export default function App() {
                                 }
                             />
                             <Route
-                                path="*"
-                                element={<Navigate to="/" replace={true} />}
-                            />
-                            <Route
                                 path="cart"
                                 element={
                                     token ? (
@@ -82,6 +78,10 @@ export default function App() {
                                         <Navigate to="/signin" replace={true} />
                                     )
                                 }
+                            />
+                            <Route
+                                path="*"
+                                element={<Navigate to="/" replace={true} />}
                             />
                         </Routes>
                     </main>
